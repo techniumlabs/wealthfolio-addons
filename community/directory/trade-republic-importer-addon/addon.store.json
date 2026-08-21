@@ -8,8 +8,8 @@
     "url": "https://github.com/blastik"
   },
   "trust": "community",
-  "verification": "unverified",
   "status": "active",
   "tags": ["import", "csv", "trade-republic"],
+  "commercialModel": "free",
   "repository": "https://github.com/blastik/trade-republic-importer-addon"
 }

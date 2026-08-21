@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-20T20:28:59.484Z",
+  "generatedAt": "2026-08-20T21:35:06.725Z",
   "addons": {
     "asset-and-cash-timeline": {
       "id": "asset-and-cash-timeline",
@@ -268,6 +268,73 @@
       "problems": [
         "repository has no detectable licence, so users have no right to use the addon"
       ],
+      "warnings": []
+    },
+    "simplefin-sync": {
+      "id": "simplefin-sync",
+      "runtimeId": "simplefin-sync",
+      "repository": "https://github.com/Bubbles840/wealthfolio-simplefin-addon",
+      "defaultBranch": "main",
+      "commit": "85fa393a4960e66f49e8a4cb36cf87f0fd008b4a",
+      "license": "MIT",
+      "lastPushedAt": "2026-08-16",
+      "manifest": {
+        "name": "SimpleFin Sync",
+        "version": "1.15.2",
+        "sdkVersion": "3.6.2",
+        "minWealthfolioVersion": "3.6.2",
+        "permissions": [
+          {
+            "category": "accounts",
+            "purpose": "Show existing accounts, and optionally create new Wealthfolio accounts, for mapping to SimpleFin accounts"
+          },
+          {
+            "category": "activities",
+            "purpose": "Import bank transactions, reconcile pending transactions (create/update/delete), and link transfer pairs"
+          },
+          {
+            "category": "navigation",
+            "purpose": "Open a mapped account's page in Wealthfolio when its row is clicked"
+          },
+          {
+            "category": "portfolio",
+            "purpose": "Read current account balances to size one-time starting-balance corrections"
+          },
+          {
+            "category": "secrets",
+            "purpose": "Store SimpleFin credentials and sync configuration securely"
+          },
+          {
+            "category": "network",
+            "purpose": "Fetch transaction data from SimpleFin Bridge"
+          },
+          {
+            "category": "ui",
+            "purpose": "Register sidebar navigation item and route for SimpleFin Sync"
+          }
+        ]
+      },
+      "dataHandling": {
+        "userDataLeavesDevice": true,
+        "externalServices": [
+          {
+            "host": "bridge.simplefin.org"
+          },
+          {
+            "host": "beta-bridge.simplefin.org"
+          },
+          {
+            "host": "api.telegram.org"
+          }
+        ],
+        "basis": "The addon requests the network permission and may reach the hosts listed above, subject to your approval at install time."
+      },
+      "compatibility": {
+        "state": "current",
+        "detail": "Built against SDK 3.6.2."
+      },
+      "notices": [],
+      "problems": [],
       "warnings": []
     },
     "value-averaging-addon": {

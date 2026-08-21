@@ -1,0 +1,42 @@
+{
+  "$schema": "../../../schemas/addon-store.schema.json",
+  "id": "simplefin-sync",
+  "name": "SimpleFin Sync",
+  "description": "Automatically import bank and credit-card transactions from SimpleFin, with correct balances, pending reconciliation, and internal-transfer linking. Optional Telegram reports and commands, and automatic categorization of Amazon charges from their order emails.",
+  "author": {
+    "name": "Bubbles840",
+    "url": "https://github.com/Bubbles840"
+  },
+  "trust": "community",
+  "status": "active",
+  "tags": [
+    "banking",
+    "import",
+    "sync",
+    "transactions",
+    "spending",
+    "telegram",
+    "categorization"
+  ],
+  "commercialModel": "external-service-required",
+  "repository": "https://github.com/Bubbles840/wealthfolio-simplefin-addon",
+  "supportUrl": "https://github.com/Bubbles840/wealthfolio-simplefin-addon/issues",
+  "privacyUrl": "https://github.com/Bubbles840/wealthfolio-simplefin-addon/blob/main/PRIVACY.md",
+  "dataHandling": {
+    "leavesDevice": true,
+    "externalServices": [
+      {
+        "name": "SimpleFIN Bridge, which supplies the transactions",
+        "url": "https://www.simplefin.org/"
+      },
+      {
+        "name": "Telegram, if you enable notifications",
+        "url": "https://telegram.org/privacy"
+      },
+      {
+        "name": "Your mail provider, read by the companion container",
+        "url": "https://github.com/Bubbles840/wealthfolio-simplefin-addon/blob/main/PRIVACY.md"
+      }
+    ]
+  }
+}

@@ -166,6 +166,32 @@ pnpm bundle:official
 If you are moving an addon from the old app repository layout, read
 [docs/repository-migration.md](docs/repository-migration.md) first.
 
+## Publishing a merged listing (maintainers)
+
+Merging a listing does not put it on the site. The website reads a committed
+snapshot of this repository, not this repository live — so a page only changes
+when someone runs the sync, reads the diff, and commits it.
+
+In the website repo:
+
+```bash
+pnpm sync:addons
+```
+
+That archives this repository at a commit, reads every `active` community
+listing plus `community/derived.json`, and rewrites
+`src/data/community-addons.ts`. It refuses to run against a dirty checkout,
+because the listings you are looking at would not be the listings it publishes.
+
+It applies the publishing gate a second time, independently of CI here. A
+listing is dropped, with the reason printed, when it has no derived record, has
+derivation problems, is not built against a sandbox-era SDK, or does not state
+`commercialModel`. Nothing gets onto the site because a check was skipped
+somewhere else.
+
+Commit the regenerated file and deploy. `pnpm sync:addons:check` fails when the
+committed snapshot has fallen behind this repository.
+
 ## Security expectations
 
 - Do not include secrets in source, docs, manifests, or screenshots.

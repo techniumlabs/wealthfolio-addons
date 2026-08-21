@@ -65,7 +65,7 @@ export function deriveDataHandling(manifest, compatibility) {
     return {
       userDataLeavesDevice: null,
       externalServices: [],
-      basis: "Built before the 3.6 sandbox, when addons could reach the network without declaring it, so the manifest cannot show where data goes.",
+      basis: "Built before Wealthfolio 3.6, back when add-ons could go online without asking. There is no way to tell from the outside where its data goes.",
     };
   }
 
@@ -73,7 +73,7 @@ export function deriveDataHandling(manifest, compatibility) {
     return {
       userDataLeavesDevice: null,
       externalServices: [],
-      basis: "The manifest declares no usable SDK version, so it is not known whether the sandbox constrains this addon's network access.",
+      basis: "Its manifest does not say which SDK it was built with, so we cannot tell whether Wealthfolio would stop it going online.",
     };
   }
 
@@ -81,7 +81,7 @@ export function deriveDataHandling(manifest, compatibility) {
     return {
       userDataLeavesDevice: false,
       externalServices: [],
-      basis: "The addon does not request the network permission, so the Wealthfolio runtime blocks all outbound requests.",
+      basis: "It never asked for internet access, so Wealthfolio will not let it connect to anything.",
     };
   }
 
@@ -91,7 +91,7 @@ export function deriveDataHandling(manifest, compatibility) {
   return {
     userDataLeavesDevice: true,
     externalServices: hosts.map((host) => ({ host })),
-    basis: "The addon requests the network permission and may reach the hosts listed above, subject to your approval at install time.",
+    basis: "It asked for internet access and can reach the sites listed here, if you allow that when you install it.",
   };
 }
 

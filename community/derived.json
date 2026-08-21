@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-21T17:36:00.942Z",
+  "generatedAt": "2026-08-21T17:44:29.606Z",
   "addons": {
     "asset-and-cash-timeline": {
       "id": "asset-and-cash-timeline",
@@ -44,7 +44,7 @@
       "dataHandling": {
         "userDataLeavesDevice": null,
         "externalServices": [],
-        "basis": "Built before the 3.6 sandbox, when addons could reach the network without declaring it, so the manifest cannot show where data goes."
+        "basis": "Built before Wealthfolio 3.6, back when add-ons could go online without asking. There is no way to tell from the outside where its data goes."
       },
       "compatibility": {
         "state": "predates-sandbox",
@@ -85,7 +85,7 @@
       "dataHandling": {
         "userDataLeavesDevice": null,
         "externalServices": [],
-        "basis": "Built before the 3.6 sandbox, when addons could reach the network without declaring it, so the manifest cannot show where data goes."
+        "basis": "Built before Wealthfolio 3.6, back when add-ons could go online without asking. There is no way to tell from the outside where its data goes."
       },
       "compatibility": {
         "state": "predates-sandbox",
@@ -148,7 +148,7 @@
       "dataHandling": {
         "userDataLeavesDevice": false,
         "externalServices": [],
-        "basis": "The addon does not request the network permission, so the Wealthfolio runtime blocks all outbound requests."
+        "basis": "It never asked for internet access, so Wealthfolio will not let it connect to anything."
       },
       "compatibility": {
         "state": "current",
@@ -207,7 +207,7 @@
       "dataHandling": {
         "userDataLeavesDevice": null,
         "externalServices": [],
-        "basis": "Built before the 3.6 sandbox, when addons could reach the network without declaring it, so the manifest cannot show where data goes."
+        "basis": "Built before Wealthfolio 3.6, back when add-ons could go online without asking. There is no way to tell from the outside where its data goes."
       },
       "compatibility": {
         "state": "predates-sandbox",
@@ -268,7 +268,7 @@
       "dataHandling": {
         "userDataLeavesDevice": false,
         "externalServices": [],
-        "basis": "The addon does not request the network permission, so the Wealthfolio runtime blocks all outbound requests."
+        "basis": "It never asked for internet access, so Wealthfolio will not let it connect to anything."
       },
       "compatibility": {
         "state": "current",
@@ -320,7 +320,7 @@
       "dataHandling": {
         "userDataLeavesDevice": false,
         "externalServices": [],
-        "basis": "The addon does not request the network permission, so the Wealthfolio runtime blocks all outbound requests."
+        "basis": "It never asked for internet access, so Wealthfolio will not let it connect to anything."
       },
       "compatibility": {
         "state": "current",
@@ -391,7 +391,7 @@
             "host": "api.telegram.org"
           }
         ],
-        "basis": "The addon requests the network permission and may reach the hosts listed above, subject to your approval at install time."
+        "basis": "It asked for internet access and can reach the sites listed here, if you allow that when you install it."
       },
       "compatibility": {
         "state": "current",
@@ -452,7 +452,7 @@
       "dataHandling": {
         "userDataLeavesDevice": false,
         "externalServices": [],
-        "basis": "The addon does not request the network permission, so the Wealthfolio runtime blocks all outbound requests."
+        "basis": "It never asked for internet access, so Wealthfolio will not let it connect to anything."
       },
       "compatibility": {
         "state": "current",
@@ -504,7 +504,7 @@
       "dataHandling": {
         "userDataLeavesDevice": null,
         "externalServices": [],
-        "basis": "Built before the 3.6 sandbox, when addons could reach the network without declaring it, so the manifest cannot show where data goes."
+        "basis": "Built before Wealthfolio 3.6, back when add-ons could go online without asking. There is no way to tell from the outside where its data goes."
       },
       "compatibility": {
         "state": "predates-sandbox",

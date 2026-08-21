@@ -56,7 +56,7 @@ for (const sdkVersion of ["3.6evil", "3.x", undefined]) {
   );
   expect(
     `basis for ${JSON.stringify(sdkVersion)} does not claim a sandbox build`,
-    !/Built before the 3\.6 sandbox/.test(handling.basis),
+    !/Built before Wealthfolio 3\.6/.test(handling.basis),
     handling.basis,
   );
 }

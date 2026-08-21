@@ -22,6 +22,7 @@ export default defineConfig({
     // 'process.env.SOME_VAR': JSON.stringify('some_value')
   },
   build: {
+    target: ["chrome107", "edge107", "firefox104", "safari16"],
     lib: {
       entry: "src/addon.tsx",
       fileName: () => "addon.js",

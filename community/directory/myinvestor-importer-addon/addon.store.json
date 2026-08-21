@@ -8,8 +8,8 @@
     "url": "https://github.com/blastik"
   },
   "trust": "community",
-  "verification": "unverified",
   "status": "active",
   "tags": ["import", "myinvestor", "inversis"],
+  "commercialModel": "free",
   "repository": "https://github.com/blastik/myinvestor-importer-addon"
 }

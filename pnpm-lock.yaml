@@ -6,7 +6,14 @@ settings:
 
 importers:
 
-  .: {}
+  .:
+    devDependencies:
+      ajv:
+        specifier: ^8.20.0
+        version: 8.20.0
+      ajv-formats:
+        specifier: ^3.0.1
+        version: 3.0.1(ajv@8.20.0)
 
   official/goal-progress-tracker-addon:
     devDependencies:
@@ -29,14 +36,14 @@ importers:
         specifier: ^4.3.4
         version: 4.7.0(vite@7.3.3(@types/node@20.19.41)(jiti@2.7.0)(lightningcss@1.32.0))
       '@wealthfolio/addon-dev-tools':
-        specifier: ^3.6.0
-        version: 3.6.0
+        specifier: ^3.7.0
+        version: 3.7.0
       '@wealthfolio/addon-sdk':
-        specifier: ^3.6.0
-        version: 3.6.0(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+        specifier: ^3.6.2
+        version: 3.6.2(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       '@wealthfolio/ui':
-        specifier: ^3.6.0
-        version: 3.6.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(i18next@25.10.10(typescript@5.9.3))(react-dom@19.2.6(react@19.2.6))(react-i18next@16.6.6(i18next@25.10.10(typescript@5.9.3))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(typescript@5.9.3))(react-is@16.13.1)(react@19.2.6)(redux@5.0.1)
+        specifier: ^3.6.2
+        version: 3.6.2(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(i18next@25.10.10(typescript@5.9.3))(react-dom@19.2.6(react@19.2.6))(react-i18next@16.6.6(i18next@25.10.10(typescript@5.9.3))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(typescript@5.9.3))(react-is@16.13.1)(react@19.2.6)(redux@5.0.1)
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -80,14 +87,14 @@ importers:
         specifier: ^4.3.4
         version: 4.7.0(vite@7.3.3(@types/node@20.19.41)(jiti@2.7.0)(lightningcss@1.32.0))
       '@wealthfolio/addon-dev-tools':
-        specifier: ^3.6.0
-        version: 3.6.0
+        specifier: ^3.7.0
+        version: 3.7.0
       '@wealthfolio/addon-sdk':
-        specifier: ^3.6.0
-        version: 3.6.0(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+        specifier: ^3.6.2
+        version: 3.6.2(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       '@wealthfolio/ui':
-        specifier: ^3.6.0
-        version: 3.6.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(i18next@25.10.10(typescript@5.9.3))(react-dom@19.2.6(react@19.2.6))(react-i18next@16.6.6(i18next@25.10.10(typescript@5.9.3))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(typescript@5.9.3))(react-is@16.13.1)(react@19.2.6)(redux@5.0.1)
+        specifier: ^3.6.2
+        version: 3.6.2(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(i18next@25.10.10(typescript@5.9.3))(react-dom@19.2.6(react@19.2.6))(react-i18next@16.6.6(i18next@25.10.10(typescript@5.9.3))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(typescript@5.9.3))(react-is@16.13.1)(react@19.2.6)(redux@5.0.1)
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -137,14 +144,14 @@ importers:
         specifier: ^5.1.4
         version: 5.2.0(vite@7.3.3(@types/node@20.19.41)(jiti@2.7.0)(lightningcss@1.32.0))
       '@wealthfolio/addon-dev-tools':
-        specifier: ^3.6.0
-        version: 3.6.0
+        specifier: ^3.7.0
+        version: 3.7.0
       '@wealthfolio/addon-sdk':
-        specifier: ^3.6.0
-        version: 3.6.0(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+        specifier: ^3.6.2
+        version: 3.6.2(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       '@wealthfolio/ui':
-        specifier: ^3.6.0
-        version: 3.6.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(i18next@25.10.10(typescript@5.9.3))(react-dom@19.2.6(react@19.2.6))(react-i18next@16.6.6(i18next@25.10.10(typescript@5.9.3))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(typescript@5.9.3))(react-is@16.13.1)(react@19.2.6)(redux@5.0.1)
+        specifier: ^3.6.2
+        version: 3.6.2(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(i18next@25.10.10(typescript@5.9.3))(react-dom@19.2.6(react@19.2.6))(react-i18next@16.6.6(i18next@25.10.10(typescript@5.9.3))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(typescript@5.9.3))(react-is@16.13.1)(react@19.2.6)(redux@5.0.1)
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -1408,20 +1415,20 @@ packages:
     peerDependencies:
       vite: ^4.2.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0
 
-  '@wealthfolio/addon-dev-tools@3.6.0':
-    resolution: {integrity: sha512-cG3zKXVUHg27gk+cGzd1XV29G82lWOhRikOZC9i1OBMiXb1D1900P5zINo0w742aTL1i1neIxFktoZI1Lx7c1g==}
+  '@wealthfolio/addon-dev-tools@3.7.0':
+    resolution: {integrity: sha512-BVCHMj8Y4W+fqKqOELQ+UQNSJIH0VxIG10iEk9jVK6OoyCxdQaILY6hHq5FtdFrw6DWrYq1/wge6EaDDODxWZg==}
     engines: {node: '>=20.0.0'}
     hasBin: true
 
-  '@wealthfolio/addon-sdk@3.6.0':
-    resolution: {integrity: sha512-42U0nqRwnGn7H4z0vsCvYLH1rlCG51ZTuEker1q7cuFOAYgOa2SHAzBwsZ9nUZ2oyrAEpyWCsObrXHdOVRxR+A==}
+  '@wealthfolio/addon-sdk@3.6.2':
+    resolution: {integrity: sha512-DDQySQJbnpU/kNOTGWom4TbSVWG9bIisoQ11oMTNhbSwMtvhiz+i4CUHwISGEDzN0Fbw1sr4az+gZb5zrioVPg==}
     engines: {node: '>=20.0.0'}
     peerDependencies:
       react: ^19.2.4
       react-dom: ^19.2.4
 
-  '@wealthfolio/ui@3.6.0':
-    resolution: {integrity: sha512-9ckwIrC0C5ACekCb+LYiY4Mzjf/fYDlND6A/5m6XO/Zaram2VdwlkVZmFzEJZDFXV61MKfxHjNmBS4M45Y+WSg==}
+  '@wealthfolio/ui@3.6.2':
+    resolution: {integrity: sha512-uEDqWV76SugXu3N0mxFrL2CcKct6SLnyJHLTUfZCQuRSy98ouK16NBxYb32KyszkZw6D9FKp/bdxBx5gqc+7EQ==}
     peerDependencies:
       i18next: ^25.6.0
       react: ^19.2.4
@@ -1431,6 +1438,17 @@ packages:
   accepts@1.3.8:
     resolution: {integrity: sha512-PYAthTa2m2VKxuvSD3DPC/Gy+U+sOA1LAuT8mkmRuvw+NACSaeXEQ+NHcVF7rONl6qcaxV3Uuemwawk+7+SJLw==}
     engines: {node: '>= 0.6'}
+
+  ajv-formats@3.0.1:
+    resolution: {integrity: sha512-8iUql50EUR+uUcdRQ3HDqa6EVyo3docL8g5WJ3FNcWmu62IbkGUue/pEyLBW8VGKKucTPgqeks4fIU1DA4yowQ==}
+    peerDependencies:
+      ajv: ^8.0.0
+    peerDependenciesMeta:
+      ajv:
+        optional: true
+
+  ajv@8.20.0:
+    resolution: {integrity: sha512-Thbli+OlOj+iMPYFBVBfJ3OmCAnaSyNn4M1vz9T6Gka5Jt9ba/HIR56joy65tY6kx/FCF5VXNB819Y7/GUrBGA==}
 
   aria-hidden@1.2.6:
     resolution: {integrity: sha512-ik3ZgC9dY/lYVVM++OISsaYDeg1tb0VtP5uL3ouh1koGOaUMDPpbFIei4JkFimWUFPn90sbMNMXQAIVOlnYKJA==}
@@ -1678,6 +1696,12 @@ packages:
     resolution: {integrity: sha512-IuL+Elrou2ZvCFHs18/CIzy2Nzvo25nZ1/D2eIZlz7c+QUayAcYoiM2BthCjs+EBHVpjYjcuLDAiCWgeIX3X1Q==}
     engines: {node: '>= 0.10.0'}
 
+  fast-deep-equal@3.1.3:
+    resolution: {integrity: sha512-f3qQ9oQy9j2AhBe/H9VC91wLmKBCCU/gDOnKNAYG5hswO7BLKj09Hc5HYNz9cGI++xlpDCIgDaitVs03ATR84Q==}
+
+  fast-uri@3.1.5:
+    resolution: {integrity: sha512-gHwA1O9LDIcKunMKhObS/HimwtehO1nPUECKAu5TpKgaO19fcWEl4bliWe1jWxVFvIXztJjjQ4L8XQ1EU9f7Jw==}
+
   fdir@6.5.0:
     resolution: {integrity: sha512-tIbYtZbucOs0BRGqPJkshJUYdL+SDH7dVM8gjy+ERp3WAUjLEFJE+02kanyHtwjWOnwrKYBiwAmM0p4kLJAnXg==}
     engines: {node: '>=12.0.0'}
@@ -1809,6 +1833,9 @@ packages:
     resolution: {integrity: sha512-/sM3dO2FOzXjKQhJuo0Q173wf2KOo8t4I8vHy6lF9poUp7bKT0/NHE8fPX23PwfhnykfqnC2xRxOnVw5XuGIaA==}
     engines: {node: '>=6'}
     hasBin: true
+
+  json-schema-traverse@1.0.0:
+    resolution: {integrity: sha512-NM8/P9n3XjXhIZn1lLhkFaACTOURQXjWhV4BA/RnOv8xvgqtqpAX9IO4mRQxSx1Rlo4tqzeqb0sOlruaOy3dug==}
 
   json5@2.2.3:
     resolution: {integrity: sha512-XmOWe7eyHYH14cLdVPoyg+GOH3rYX++KpzrylJwSW98t3Nk+U8XOl8FWKOgwtzdb8lXGf6zYwDUzeHMWfxasyg==}
@@ -2161,6 +2188,10 @@ packages:
 
   redux@5.0.1:
     resolution: {integrity: sha512-M9/ELqF6fy8FwmkpnF0S3YKOqMyoWJ4+CS5Efg2ct3oY9daQvd/Pc71FpGZsVsbl3Cpb+IIcjBDUnnyBdQbq4w==}
+
+  require-from-string@2.0.2:
+    resolution: {integrity: sha512-Xf0nWe6RseziFMu+Ap9biiUbmplq6S9/p+7w7YXP/JBHhrUDDUhwa+vANyubuqfZWTveU//DYVGsDG7RKL/vEw==}
+    engines: {node: '>=0.10.0'}
 
   reselect@5.1.1:
     resolution: {integrity: sha512-K/BG6eIky/SBpzfHZv/dd+9JBFiS4SWV7FIujVyJRux6e45+73RaUHXLmIR1f7WOMaQ0U1km6qwklRQxpJJY0w==}
@@ -3503,7 +3534,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@wealthfolio/addon-dev-tools@3.6.0':
+  '@wealthfolio/addon-dev-tools@3.7.0':
     dependencies:
       chokidar: 4.0.3
       commander: 14.0.3
@@ -3512,12 +3543,12 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@wealthfolio/addon-sdk@3.6.0(react-dom@19.2.6(react@19.2.6))(react@19.2.6)':
+  '@wealthfolio/addon-sdk@3.6.2(react-dom@19.2.6(react@19.2.6))(react@19.2.6)':
     dependencies:
       react: 19.2.6
       react-dom: 19.2.6(react@19.2.6)
 
-  '@wealthfolio/ui@3.6.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(i18next@25.10.10(typescript@5.9.3))(react-dom@19.2.6(react@19.2.6))(react-i18next@16.6.6(i18next@25.10.10(typescript@5.9.3))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(typescript@5.9.3))(react-is@16.13.1)(react@19.2.6)(redux@5.0.1)':
+  '@wealthfolio/ui@3.6.2(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(i18next@25.10.10(typescript@5.9.3))(react-dom@19.2.6(react@19.2.6))(react-i18next@16.6.6(i18next@25.10.10(typescript@5.9.3))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(typescript@5.9.3))(react-is@16.13.1)(react@19.2.6)(redux@5.0.1)':
     dependencies:
       '@internationalized/date': 3.12.1
       '@number-flow/react': 0.6.1(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
@@ -3580,6 +3611,17 @@ snapshots:
     dependencies:
       mime-types: 2.1.35
       negotiator: 0.6.3
+
+  ajv-formats@3.0.1(ajv@8.20.0):
+    optionalDependencies:
+      ajv: 8.20.0
+
+  ajv@8.20.0:
+    dependencies:
+      fast-deep-equal: 3.1.3
+      fast-uri: 3.1.5
+      json-schema-traverse: 1.0.0
+      require-from-string: 2.0.2
 
   aria-hidden@1.2.6:
     dependencies:
@@ -3849,6 +3891,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  fast-deep-equal@3.1.3: {}
+
+  fast-uri@3.1.5: {}
+
   fdir@6.5.0(picomatch@4.0.4):
     optionalDependencies:
       picomatch: 4.0.4
@@ -3961,6 +4007,8 @@ snapshots:
   js-tokens@4.0.0: {}
 
   jsesc@3.1.0: {}
+
+  json-schema-traverse@1.0.0: {}
 
   json5@2.2.3: {}
 
@@ -4267,6 +4315,8 @@ snapshots:
       redux: 5.0.1
 
   redux@5.0.1: {}
+
+  require-from-string@2.0.2: {}
 
   reselect@5.1.1: {}
 

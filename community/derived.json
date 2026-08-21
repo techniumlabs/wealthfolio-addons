@@ -401,6 +401,70 @@
       "problems": [],
       "warnings": []
     },
+    "trade-republic-importer-addon": {
+      "id": "trade-republic-importer-addon",
+      "runtimeId": "trade-republic-importer",
+      "repository": "https://github.com/blastik/trade-republic-importer-addon",
+      "defaultBranch": "main",
+      "commit": "ccce1da26fa6c01a55c9494cf358774934b514de",
+      "license": "MIT",
+      "lastPushedAt": "2026-08-21",
+      "manifest": {
+        "name": "Trade Republic Importer",
+        "version": "1.3.1",
+        "sdkVersion": "3.6.1",
+        "minWealthfolioVersion": "3.6.0",
+        "permissions": [
+          {
+            "category": "accounts",
+            "purpose": "List accounts so the user can select their cash and portfolio accounts"
+          },
+          {
+            "category": "activities",
+            "purpose": "Validate and import activities parsed from the Trade Republic CSV"
+          },
+          {
+            "category": "assets",
+            "purpose": "Create new asset entries for unrecognised securities during import"
+          },
+          {
+            "category": "secrets",
+            "purpose": "Persist addon configuration (account selection, transfer patterns) across sessions"
+          },
+          {
+            "category": "ui",
+            "purpose": "Add importer navigation item to sidebar and register addon routes"
+          },
+          {
+            "category": "query",
+            "purpose": "Refresh host application data after import"
+          },
+          {
+            "category": "portfolio",
+            "purpose": "Trigger portfolio recalculation after import"
+          },
+          {
+            "category": "market-data",
+            "purpose": "Search for securities when mapping unrecognised tickers"
+          }
+        ]
+      },
+      "dataHandling": {
+        "userDataLeavesDevice": false,
+        "externalServices": [],
+        "basis": "The addon does not request the network permission, so the Wealthfolio runtime blocks all outbound requests."
+      },
+      "compatibility": {
+        "state": "current",
+        "detail": "Built against SDK 3.6.1."
+      },
+      "notices": [],
+      "problems": [],
+      "warnings": [
+        "declares the secrets permission but not network, so any service it stores credentials for is unreachable",
+        "manifest id \"trade-republic-importer\" differs from the listing id \"trade-republic-importer-addon\""
+      ]
+    },
     "value-averaging-addon": {
       "id": "value-averaging-addon",
       "runtimeId": "value-averaging-addon",

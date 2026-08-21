@@ -15,7 +15,7 @@ Listing requirements and the publisher attestation are in
 | Wealthfolio Dividend Tracker | ragnarok896209 | pending | none | pre-3.6 — rebuild needed | [Repo](https://github.com/ragnarok-89/Wealthfolio-Dividend-Tracker) |
 | Lunch Money Addon | elson8012 | pending | MIT | pre-3.6 — rebuild needed | [Repo](https://github.com/elson/lunchmoney-addon) |
 | Wealthfolio Rebalancer | ibalboteo | pending | none | SDK 3.6+ | [Repo](https://github.com/ibalboteo/wealthfolio-rebalancer) |
-| Trade Republic Importer | blastik | active | none | SDK 3.6+ | [Repo](https://github.com/blastik/trade-republic-importer-addon) |
+| Trade Republic Importer | blastik | active | MIT | SDK 3.6+ | [Repo](https://github.com/blastik/trade-republic-importer-addon) |
 | Value Averaging Addon | wujoe | pending | MIT | pre-3.6 — rebuild needed | [Repo](https://github.com/WuJoe826/Value-Averaging-Addon) |
 
 Licence and runtime are **derived** from each publisher's repository, not

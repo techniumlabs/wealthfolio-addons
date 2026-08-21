@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-21T00:26:02.817Z",
+  "generatedAt": "2026-08-21T17:22:14.565Z",
   "addons": {
     "asset-and-cash-timeline": {
       "id": "asset-and-cash-timeline",
@@ -275,9 +275,9 @@
       "runtimeId": "trade-republic-importer",
       "repository": "https://github.com/blastik/trade-republic-importer-addon",
       "defaultBranch": "main",
-      "commit": "d6f83e577685c27fb70396acb47c32a0707040b1",
-      "license": null,
-      "lastPushedAt": "2026-07-10",
+      "commit": "ccce1da26fa6c01a55c9494cf358774934b514de",
+      "license": "MIT",
+      "lastPushedAt": "2026-08-21",
       "manifest": {
         "name": "Trade Republic Importer",
         "version": "1.3.1",
@@ -328,9 +328,7 @@
         "detail": "Built against SDK 3.6.1."
       },
       "notices": [],
-      "problems": [
-        "repository has no detectable licence, so users have no right to use the addon"
-      ],
+      "problems": [],
       "warnings": [
         "declares the secrets permission but not network, so any service it stores credentials for is unreachable",
         "manifest id \"trade-republic-importer\" differs from the listing id \"trade-republic-importer-addon\""

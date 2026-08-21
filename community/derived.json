@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-20T21:35:06.725Z",
+  "generatedAt": "2026-08-21T17:36:00.942Z",
   "addons": {
     "asset-and-cash-timeline": {
       "id": "asset-and-cash-timeline",
@@ -217,6 +217,70 @@
       "problems": [],
       "warnings": []
     },
+    "myinvestor-importer-addon": {
+      "id": "myinvestor-importer-addon",
+      "runtimeId": "myinvestor-importer",
+      "repository": "https://github.com/blastik/myinvestor-importer-addon",
+      "defaultBranch": "main",
+      "commit": "0cfd17fe4e356458a90f2cad52344e56444cca38",
+      "license": "MIT",
+      "lastPushedAt": "2026-08-21",
+      "manifest": {
+        "name": "MyInvestor Importer",
+        "version": "1.0.1",
+        "sdkVersion": "3.6.1",
+        "minWealthfolioVersion": "3.6.0",
+        "permissions": [
+          {
+            "category": "accounts",
+            "purpose": "List accounts so the user can select their MyInvestor account"
+          },
+          {
+            "category": "activities",
+            "purpose": "Validate and import activities parsed from the MyInvestor exports; read existing account activities to avoid double-recording money already imported as a cross-account transfer by another addon"
+          },
+          {
+            "category": "assets",
+            "purpose": "Create new asset entries for unrecognised funds during import"
+          },
+          {
+            "category": "secrets",
+            "purpose": "Persist addon configuration (account selection, security mappings) across sessions"
+          },
+          {
+            "category": "ui",
+            "purpose": "Add importer navigation item to sidebar and register addon routes"
+          },
+          {
+            "category": "query",
+            "purpose": "Refresh host application data after import"
+          },
+          {
+            "category": "portfolio",
+            "purpose": "Trigger portfolio recalculation after import"
+          },
+          {
+            "category": "market-data",
+            "purpose": "Search for securities when mapping unrecognised funds"
+          }
+        ]
+      },
+      "dataHandling": {
+        "userDataLeavesDevice": false,
+        "externalServices": [],
+        "basis": "The addon does not request the network permission, so the Wealthfolio runtime blocks all outbound requests."
+      },
+      "compatibility": {
+        "state": "current",
+        "detail": "Built against SDK 3.6.1."
+      },
+      "notices": [],
+      "problems": [],
+      "warnings": [
+        "declares the secrets permission but not network, so any service it stores credentials for is unreachable",
+        "manifest id \"myinvestor-importer\" differs from the listing id \"myinvestor-importer-addon\""
+      ]
+    },
     "rebalancer": {
       "id": "rebalancer",
       "runtimeId": "rebalancer",
@@ -275,12 +339,12 @@
       "runtimeId": "simplefin-sync",
       "repository": "https://github.com/Bubbles840/wealthfolio-simplefin-addon",
       "defaultBranch": "main",
-      "commit": "85fa393a4960e66f49e8a4cb36cf87f0fd008b4a",
+      "commit": "9d4277a283df6be6d057511e6c231baf74c5f54d",
       "license": "MIT",
-      "lastPushedAt": "2026-08-16",
+      "lastPushedAt": "2026-08-21",
       "manifest": {
         "name": "SimpleFin Sync",
-        "version": "1.15.2",
+        "version": "1.17.1",
         "sdkVersion": "3.6.2",
         "minWealthfolioVersion": "3.6.2",
         "permissions": [

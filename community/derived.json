@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-21T00:26:45.357Z",
+  "generatedAt": "2026-08-21T17:22:40.015Z",
   "addons": {
     "asset-and-cash-timeline": {
       "id": "asset-and-cash-timeline",
@@ -222,9 +222,9 @@
       "runtimeId": "myinvestor-importer",
       "repository": "https://github.com/blastik/myinvestor-importer-addon",
       "defaultBranch": "main",
-      "commit": "7904e40aceebdca21412edba4fffd1aa0d8a040a",
-      "license": null,
-      "lastPushedAt": "2026-07-10",
+      "commit": "0cfd17fe4e356458a90f2cad52344e56444cca38",
+      "license": "MIT",
+      "lastPushedAt": "2026-08-21",
       "manifest": {
         "name": "MyInvestor Importer",
         "version": "1.0.1",
@@ -275,9 +275,7 @@
         "detail": "Built against SDK 3.6.1."
       },
       "notices": [],
-      "problems": [
-        "repository has no detectable licence, so users have no right to use the addon"
-      ],
+      "problems": [],
       "warnings": [
         "declares the secrets permission but not network, so any service it stores credentials for is unreachable",
         "manifest id \"myinvestor-importer\" differs from the listing id \"myinvestor-importer-addon\""

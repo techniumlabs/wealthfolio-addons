@@ -16,6 +16,7 @@ Listing requirements and the publisher attestation are in
 | Lunch Money Addon | elson8012 | pending | MIT | pre-3.6 — rebuild needed | [Repo](https://github.com/elson/lunchmoney-addon) |
 | MyInvestor Importer | blastik | active | MIT | SDK 3.6+ | [Repo](https://github.com/blastik/myinvestor-importer-addon) |
 | Wealthfolio Rebalancer | ibalboteo | pending | none | SDK 3.6+ | [Repo](https://github.com/ibalboteo/wealthfolio-rebalancer) |
+| SimpleFin Sync | Bubbles840 | active | MIT | SDK 3.6+ | [Repo](https://github.com/Bubbles840/wealthfolio-simplefin-addon) |
 | Value Averaging Addon | wujoe | pending | MIT | pre-3.6 — rebuild needed | [Repo](https://github.com/WuJoe826/Value-Averaging-Addon) |
 
 Licence and runtime are **derived** from each publisher's repository, not

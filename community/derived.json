@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-21T17:44:29.606Z",
+  "generatedAt": "2026-08-24T08:00:27.613Z",
   "addons": {
     "asset-and-cash-timeline": {
       "id": "asset-and-cash-timeline",
@@ -222,7 +222,7 @@
       "runtimeId": "myinvestor-importer",
       "repository": "https://github.com/blastik/myinvestor-importer-addon",
       "defaultBranch": "main",
-      "commit": "0cfd17fe4e356458a90f2cad52344e56444cca38",
+      "commit": "c9f2af2b5cb272f879366170855df7d56145cd03",
       "license": "MIT",
       "lastPushedAt": "2026-08-21",
       "manifest": {
@@ -288,7 +288,7 @@
       "defaultBranch": "main",
       "commit": "f5105d6017bedde79248730395123f36a187ef4b",
       "license": null,
-      "lastPushedAt": "2026-08-17",
+      "lastPushedAt": "2026-08-24",
       "manifest": {
         "name": "rebalancer",
         "version": "3.1.0",
@@ -339,12 +339,12 @@
       "runtimeId": "simplefin-sync",
       "repository": "https://github.com/Bubbles840/wealthfolio-simplefin-addon",
       "defaultBranch": "main",
-      "commit": "9d4277a283df6be6d057511e6c231baf74c5f54d",
+      "commit": "22bd9041dafa556772ed8ce88c4ba77b1e28d720",
       "license": "MIT",
-      "lastPushedAt": "2026-08-21",
+      "lastPushedAt": "2026-08-24",
       "manifest": {
         "name": "SimpleFin Sync",
-        "version": "1.17.1",
+        "version": "1.24.0",
         "sdkVersion": "3.6.2",
         "minWealthfolioVersion": "3.6.2",
         "permissions": [
@@ -406,7 +406,7 @@
       "runtimeId": "trade-republic-importer",
       "repository": "https://github.com/blastik/trade-republic-importer-addon",
       "defaultBranch": "main",
-      "commit": "ccce1da26fa6c01a55c9494cf358774934b514de",
+      "commit": "4a079f159db92f8974bfcb90a22f100d84be6383",
       "license": "MIT",
       "lastPushedAt": "2026-08-21",
       "manifest": {

@@ -7,6 +7,7 @@ import { useSwingPreferences } from "./use-swing-preferences";
 import { useHoldings } from "./use-holdings";
 import { TradeMatcher, PerformanceCalculator } from "../lib";
 import { useCurrencyConversion } from "./use-currency-conversion";
+import { parseOccSymbol } from "../lib/utils";
 import { startOfDay, endOfDay, startOfYear, subMonths, subYears } from "date-fns";
 
 type ChartPeriodType = "daily" | "weekly" | "monthly";
@@ -250,10 +251,16 @@ function updateOpenPositionsWithMarketPrices(
         // Note: More complex currency conversions would need additional FX rate lookups
       }
 
-      const marketValue = currentPrice * position.quantity;
-      const costBasis = position.averageCost * position.quantity;
+      const contractMultiplier = parseOccSymbol(position.symbol) ? 100 : 1;
+      const marketValue = currentPrice * position.quantity * contractMultiplier;
+      const costBasis = position.averageCost * position.quantity * contractMultiplier;
+      const isShortOption =
+        position.openingActivityType === "SELL" && position.openingSubtype === "POSITION_OPEN";
       // Include dividends in unrealized P/L calculation to match TradeMatcher
-      const unrealizedPL = marketValue - costBasis + (position.totalDividends || 0);
+      const unrealizedPL =
+        isShortOption
+          ? costBasis - marketValue + (position.totalDividends || 0)
+          : marketValue - costBasis + (position.totalDividends || 0);
       const unrealizedReturnPercent = costBasis > 0 ? unrealizedPL / costBasis : 0;
 
       return {

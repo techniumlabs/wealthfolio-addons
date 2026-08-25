@@ -168,6 +168,220 @@ export function testTradeMatcher() {
     );
     console.log(`Total Dividend Amount in Data: $${totalDividendAmount.toFixed(2)}`);
   }
+
+  // Test 7: Option-specific behavior assertions
+  console.log("\n=== TEST 7: OPTION OPEN/CLOSE + SHORT BEHAVIOR ===");
+
+  const optionActivities: ActivityDetails[] = [
+    {
+      id: "opt-close-short",
+      accountId: "opt-account",
+      assetId: "opt-asset",
+      activityType: "BUY" as ActivityType,
+      subtype: "POSITION_CLOSE",
+      date: new Date("2026-08-20T00:00:00.000Z"),
+      quantity: "2",
+      unitPrice: "0.01",
+      currency: "USD",
+      fee: "0",
+      amount: "0.02",
+      needsReview: false,
+      comment: "close short put",
+      createdAt: new Date("2026-08-20T00:00:00.000Z"),
+      updatedAt: new Date("2026-08-20T00:00:00.000Z"),
+      accountName: "OPT-TEST",
+      accountCurrency: "USD",
+      assetSymbol: "BIDU260821P00094000",
+      assetName: "BIDU Aug 2026 94.000 put",
+      assetQuoteMode: "MARKET",
+      instrumentType: "OPTION",
+      isSelected: false,
+      hasSwingTag: false,
+    } as unknown as ActivityDetails,
+    {
+      id: "opt-open-short",
+      accountId: "opt-account",
+      assetId: "opt-asset",
+      activityType: "SELL" as ActivityType,
+      subtype: "POSITION_OPEN",
+      date: new Date("2026-07-27T00:00:00.000Z"),
+      quantity: "2",
+      unitPrice: "1.59",
+      currency: "USD",
+      fee: "0",
+      amount: "3.18",
+      needsReview: false,
+      comment: "open short put",
+      createdAt: new Date("2026-07-27T00:00:00.000Z"),
+      updatedAt: new Date("2026-07-27T00:00:00.000Z"),
+      accountName: "OPT-TEST",
+      accountCurrency: "USD",
+      assetSymbol: "BIDU260821P00094000",
+      assetName: "BIDU Aug 2026 94.000 put",
+      assetQuoteMode: "MARKET",
+      instrumentType: "OPTION",
+      isSelected: false,
+      hasSwingTag: false,
+    } as unknown as ActivityDetails,
+  ];
+
+  const optionMatcher = new TradeMatcher({
+    lotMethod: "FIFO",
+    includeFees: true,
+    includeDividends: false,
+  });
+
+  const optionResult = optionMatcher.matchTrades(optionActivities);
+
+  if (optionResult.closedTrades.length !== 1) {
+    throw new Error(
+      `Expected 1 closed option trade, got ${optionResult.closedTrades.length}`,
+    );
+  }
+  if (optionResult.openPositions.length !== 0) {
+    throw new Error(
+      `Expected 0 open option positions, got ${optionResult.openPositions.length}`,
+    );
+  }
+  if (optionResult.unmatchedSells.length !== 0 || optionResult.unmatchedBuys.length !== 0) {
+    throw new Error(
+      `Expected no unmatched option activities, got sells=${optionResult.unmatchedSells.length}, buys=${optionResult.unmatchedBuys.length}`,
+    );
+  }
+
+  const optionTrade = optionResult.closedTrades[0];
+  const expectedShortPL = 2 * (1.59 - 0.01) * 100;
+  if (Math.abs(optionTrade.realizedPL - expectedShortPL) > 0.0001) {
+    throw new Error(
+      `Expected short option realized P/L ${expectedShortPL.toFixed(2)}, got ${optionTrade.realizedPL.toFixed(2)}`,
+    );
+  }
+
+  // Ensure OPTION classification uses subtype semantics.
+  const optionLongActivities: ActivityDetails[] = [
+    {
+      id: "opt-open-long",
+      accountId: "opt-account",
+      assetId: "opt-asset-long",
+      activityType: "BUY" as ActivityType,
+      subtype: "POSITION_OPEN",
+      date: new Date("2026-06-01T00:00:00.000Z"),
+      quantity: "1",
+      unitPrice: "2.5",
+      currency: "USD",
+      fee: "0",
+      amount: "2.5",
+      needsReview: false,
+      comment: "open long call",
+      createdAt: new Date("2026-06-01T00:00:00.000Z"),
+      updatedAt: new Date("2026-06-01T00:00:00.000Z"),
+      accountName: "OPT-TEST",
+      accountCurrency: "USD",
+      assetSymbol: "AAPL260919C00200000",
+      assetName: "AAPL Sep 2026 200.000 call",
+      assetQuoteMode: "MARKET",
+      instrumentType: "OPTION",
+      isSelected: false,
+      hasSwingTag: false,
+    } as unknown as ActivityDetails,
+    {
+      id: "opt-close-long",
+      accountId: "opt-account",
+      assetId: "opt-asset-long",
+      activityType: "SELL" as ActivityType,
+      subtype: "POSITION_CLOSE",
+      date: new Date("2026-06-10T00:00:00.000Z"),
+      quantity: "1",
+      unitPrice: "3.2",
+      currency: "USD",
+      fee: "0",
+      amount: "3.2",
+      needsReview: false,
+      comment: "close long call",
+      createdAt: new Date("2026-06-10T00:00:00.000Z"),
+      updatedAt: new Date("2026-06-10T00:00:00.000Z"),
+      accountName: "OPT-TEST",
+      accountCurrency: "USD",
+      assetSymbol: "AAPL260919C00200000",
+      assetName: "AAPL Sep 2026 200.000 call",
+      assetQuoteMode: "MARKET",
+      instrumentType: "OPTION",
+      isSelected: false,
+      hasSwingTag: false,
+    } as unknown as ActivityDetails,
+  ];
+
+  const optionLongResult = optionMatcher.matchTrades(optionLongActivities);
+  if (optionLongResult.closedTrades.length !== 1) {
+    throw new Error(
+      `Expected 1 closed long option trade, got ${optionLongResult.closedTrades.length}`,
+    );
+  }
+
+  if (optionLongResult.unmatchedBuys.length !== 0 || optionLongResult.unmatchedSells.length !== 0) {
+    throw new Error(
+      `Expected no unmatched long option activities, got sells=${optionLongResult.unmatchedSells.length}, buys=${optionLongResult.unmatchedBuys.length}`,
+    );
+  }
+
+  // Ensure EQUITY still uses BUY/SELL semantics.
+  const equityActivities: ActivityDetails[] = [
+    {
+      id: "eq-open",
+      accountId: "eq-account",
+      assetId: "eq-asset",
+      activityType: "BUY" as ActivityType,
+      date: new Date("2026-01-01T00:00:00.000Z"),
+      quantity: "10",
+      unitPrice: "100",
+      currency: "USD",
+      fee: "0",
+      amount: "1000",
+      needsReview: false,
+      comment: "open equity",
+      createdAt: new Date("2026-01-01T00:00:00.000Z"),
+      updatedAt: new Date("2026-01-01T00:00:00.000Z"),
+      accountName: "EQ-TEST",
+      accountCurrency: "USD",
+      assetSymbol: "MSFT",
+      assetName: "Microsoft Corp",
+      assetQuoteMode: "MARKET",
+      instrumentType: "EQUITY",
+      isSelected: false,
+      hasSwingTag: false,
+    } as unknown as ActivityDetails,
+    {
+      id: "eq-close",
+      accountId: "eq-account",
+      assetId: "eq-asset",
+      activityType: "SELL" as ActivityType,
+      date: new Date("2026-01-02T00:00:00.000Z"),
+      quantity: "10",
+      unitPrice: "110",
+      currency: "USD",
+      fee: "0",
+      amount: "1100",
+      needsReview: false,
+      comment: "close equity",
+      createdAt: new Date("2026-01-02T00:00:00.000Z"),
+      updatedAt: new Date("2026-01-02T00:00:00.000Z"),
+      accountName: "EQ-TEST",
+      accountCurrency: "USD",
+      assetSymbol: "MSFT",
+      assetName: "Microsoft Corp",
+      assetQuoteMode: "MARKET",
+      instrumentType: "EQUITY",
+      isSelected: false,
+      hasSwingTag: false,
+    } as unknown as ActivityDetails,
+  ];
+
+  const equityResult = optionMatcher.matchTrades(equityActivities);
+  if (equityResult.closedTrades.length !== 1) {
+    throw new Error(`Expected 1 closed equity trade, got ${equityResult.closedTrades.length}`);
+  }
+
+  console.log("Option-specific assertions passed.");
 }
 
 // Run the test

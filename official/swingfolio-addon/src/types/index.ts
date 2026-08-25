@@ -40,6 +40,8 @@ export interface ClosedTrade {
 
 export interface OpenPosition {
   id: string;
+  openingActivityType: string;
+  openingSubtype?: string | null;
   symbol: string;
   assetId: string;
   assetName?: string;

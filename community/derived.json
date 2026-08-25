@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-24T08:00:27.613Z",
+  "generatedAt": "2026-08-25T20:40:31.068Z",
   "addons": {
     "asset-and-cash-timeline": {
       "id": "asset-and-cash-timeline",
@@ -513,6 +513,69 @@
       "notices": [
         "not-financial-advice",
         "not-investment-advice"
+      ],
+      "problems": [],
+      "warnings": []
+    },
+    "wealthfolio-skatt": {
+      "id": "wealthfolio-skatt",
+      "runtimeId": "wealthfolio-skatt",
+      "repository": "https://github.com/AlexanderBabel/wealthfolio-skatt",
+      "defaultBranch": "main",
+      "commit": "f7bbdb6573891690026ba8eb4b0e3b4c7e0e3332",
+      "license": "MIT",
+      "lastPushedAt": "2026-08-25",
+      "manifest": {
+        "name": "Skatt (Sweden)",
+        "version": "1.2.0",
+        "sdkVersion": "3.6.2",
+        "minWealthfolioVersion": "3.6.2",
+        "permissions": [
+          {
+            "category": "accounts",
+            "purpose": "List accounts so each one can be classified as ISK, depå or untaxed."
+          },
+          {
+            "category": "portfolio",
+            "purpose": "Read the account value at each quarter start for the ISK kapitalunderlag, and current depå holdings to tell fund/ETF units apart from individual shares."
+          },
+          {
+            "category": "activities",
+            "purpose": "Read deposits, trades, dividends and interest to compute the taxable amounts."
+          },
+          {
+            "category": "currency",
+            "purpose": "Convert amounts in a currency the account itself does not use into SEK."
+          },
+          {
+            "category": "quotes",
+            "purpose": "Read the daily exchange-rate history so a trade is converted at the rate on its own date, and each depå holding's own price history for the fund schablonintäkt."
+          },
+          {
+            "category": "assets",
+            "purpose": "Tell fund and ETF holdings in a depå apart from individual shares, since only funds carry the 0.4 % schablonintäkt."
+          },
+          {
+            "category": "events",
+            "purpose": "Know when a trade, edit or import changes the portfolio, so the cached figures refresh then instead of on a timer."
+          },
+          {
+            "category": "files",
+            "purpose": "Save the K4 avsnitt A export as a CSV file where you choose."
+          }
+        ]
+      },
+      "dataHandling": {
+        "userDataLeavesDevice": false,
+        "externalServices": [],
+        "basis": "It never asked for internet access, so Wealthfolio will not let it connect to anything."
+      },
+      "compatibility": {
+        "state": "current",
+        "detail": "Built against SDK 3.6.2."
+      },
+      "notices": [
+        "not-tax-advice"
       ],
       "problems": [],
       "warnings": []

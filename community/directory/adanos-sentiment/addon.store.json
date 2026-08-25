@@ -1,0 +1,15 @@
+{
+  "$schema": "../../../schemas/addon-store.schema.json",
+  "id": "adanos-sentiment",
+  "name": "Adanos Sentiment",
+  "description": "Adds Reddit, X, news, and Polymarket stock sentiment context to the largest holdings in a Wealthfolio portfolio.",
+  "author": {
+    "name": "Adanos",
+    "url": "https://adanos.org/"
+  },
+  "trust": "community",
+  "status": "active",
+  "tags": ["portfolio", "analytics", "sentiment"],
+  "commercialModel": "external-service-required",
+  "repository": "https://github.com/adanos-software/wealthfolio-adanos-sentiment"
+}

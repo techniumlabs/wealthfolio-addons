@@ -1,6 +1,51 @@
 {
-  "generatedAt": "2026-08-24T08:00:27.613Z",
+  "generatedAt": "2026-08-25T06:30:55.230Z",
   "addons": {
+    "adanos-sentiment": {
+      "id": "adanos-sentiment",
+      "runtimeId": "adanos-sentiment",
+      "repository": "https://github.com/adanos-software/wealthfolio-adanos-sentiment",
+      "defaultBranch": "main",
+      "commit": "215fffe2953fc4cd72dbd5f02bf805989f9eee5c",
+      "license": "MIT",
+      "lastPushedAt": "2026-08-25",
+      "manifest": {
+        "name": "Adanos Sentiment",
+        "version": "1.1.0",
+        "sdkVersion": "3.7.0",
+        "minWealthfolioVersion": "3.7.0",
+        "permissions": [
+          {
+            "category": "portfolio",
+            "purpose": "Read the current portfolio holdings and map the largest positions to Adanos ticker sentiment"
+          },
+          {
+            "category": "secrets",
+            "purpose": "Store the Adanos API key securely in addon-scoped encrypted storage"
+          },
+          {
+            "category": "network",
+            "purpose": "Fetch sentiment and quota data from api.adanos.org for portfolio tickers"
+          }
+        ]
+      },
+      "dataHandling": {
+        "userDataLeavesDevice": true,
+        "externalServices": [
+          {
+            "host": "api.adanos.org"
+          }
+        ],
+        "basis": "It asked for internet access and can reach the sites listed here, if you allow that when you install it."
+      },
+      "compatibility": {
+        "state": "current",
+        "detail": "Built against SDK 3.7.0."
+      },
+      "notices": [],
+      "problems": [],
+      "warnings": []
+    },
     "asset-and-cash-timeline": {
       "id": "asset-and-cash-timeline",
       "runtimeId": "asset-and-cash-timeline",

@@ -1,0 +1,15 @@
+{
+  "$schema": "../../../schemas/addon-store.schema.json",
+  "id": "wealthfolio-skatt",
+  "name": "Skatt (Sweden)",
+  "description": "Swedish capital income tax per calendar year for ISK, depå and crypto accounts. Computes the ISK and fund schablonintäkt, dividends, interest and crypto disposals, and exports K4 avsnitt A and D as CSV for Skatteverket.",
+  "author": {
+    "name": "AlexanderBabel",
+    "url": "https://github.com/AlexanderBabel"
+  },
+  "trust": "community",
+  "status": "active",
+  "tags": ["tax", "sweden", "isk", "crypto", "export"],
+  "commercialModel": "free",
+  "repository": "https://github.com/AlexanderBabel/wealthfolio-skatt"
+}

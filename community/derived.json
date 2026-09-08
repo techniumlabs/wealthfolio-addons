@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-25T06:30:55.230Z",
+  "generatedAt": "2026-08-28T17:41:26.476Z",
   "addons": {
     "adanos-sentiment": {
       "id": "adanos-sentiment",
@@ -267,13 +267,13 @@
       "runtimeId": "myinvestor-importer",
       "repository": "https://github.com/blastik/myinvestor-importer-addon",
       "defaultBranch": "main",
-      "commit": "c9f2af2b5cb272f879366170855df7d56145cd03",
+      "commit": "287ef81d0b3f0b9890bc0df89b25d5643be8da81",
       "license": "MIT",
-      "lastPushedAt": "2026-08-21",
+      "lastPushedAt": "2026-08-24",
       "manifest": {
         "name": "MyInvestor Importer",
-        "version": "1.0.1",
-        "sdkVersion": "3.6.1",
+        "version": "1.0.2",
+        "sdkVersion": "3.7.0",
         "minWealthfolioVersion": "3.6.0",
         "permissions": [
           {
@@ -317,7 +317,7 @@
       },
       "compatibility": {
         "state": "current",
-        "detail": "Built against SDK 3.6.1."
+        "detail": "Built against SDK 3.7.0."
       },
       "notices": [],
       "problems": [],
@@ -384,12 +384,12 @@
       "runtimeId": "simplefin-sync",
       "repository": "https://github.com/Bubbles840/wealthfolio-simplefin-addon",
       "defaultBranch": "main",
-      "commit": "22bd9041dafa556772ed8ce88c4ba77b1e28d720",
+      "commit": "f294965239dd61a0bc2c1224435f2fdac6c04d34",
       "license": "MIT",
-      "lastPushedAt": "2026-08-24",
+      "lastPushedAt": "2026-08-25",
       "manifest": {
         "name": "SimpleFin Sync",
-        "version": "1.24.0",
+        "version": "1.24.1",
         "sdkVersion": "3.6.2",
         "minWealthfolioVersion": "3.6.2",
         "permissions": [
@@ -446,18 +446,78 @@
       "problems": [],
       "warnings": []
     },
+    "simplefin-wealthfolio-addon": {
+      "id": "simplefin-wealthfolio-addon",
+      "runtimeId": "simplefin-wealthfolio-addon",
+      "repository": "https://github.com/christancho/simplefin-wealthfolio-addon",
+      "defaultBranch": "main",
+      "commit": "0e8f2c1e7a34e075879752a45de2c42366260988",
+      "license": "MIT",
+      "lastPushedAt": "2026-08-28",
+      "manifest": {
+        "name": "SimpleFIN Sync",
+        "version": "1.1.0",
+        "sdkVersion": "3.6.2",
+        "minWealthfolioVersion": "3.6.2",
+        "permissions": [
+          {
+            "category": "network",
+            "purpose": "Fetch accounts, transactions and holdings from the SimpleFIN Bridge."
+          },
+          {
+            "category": "secrets",
+            "purpose": "Store the SimpleFIN access credentials in the system keyring, and let the host attach them to brokered SimpleFIN Bridge requests without exposing the plaintext to the addon."
+          },
+          {
+            "category": "accounts",
+            "purpose": "List Wealthfolio accounts to map against, and create new ones on request."
+          },
+          {
+            "category": "activities",
+            "purpose": "Import cash transactions fetched from SimpleFIN, and reconcile credit-card payments and cash-to-cash transfers into linked transfers."
+          },
+          {
+            "category": "snapshots",
+            "purpose": "Import holdings snapshots for investment accounts."
+          },
+          {
+            "category": "portfolio",
+            "purpose": "Recalculate a CASH account's balance after backfilling its full history, so the opening-balance gap against SimpleFIN can be measured accurately."
+          }
+        ]
+      },
+      "dataHandling": {
+        "userDataLeavesDevice": true,
+        "externalServices": [
+          {
+            "host": "bridge.simplefin.org"
+          },
+          {
+            "host": "beta-bridge.simplefin.org"
+          }
+        ],
+        "basis": "It asked for internet access and can reach the sites listed here, if you allow that when you install it."
+      },
+      "compatibility": {
+        "state": "current",
+        "detail": "Built against SDK 3.6.2."
+      },
+      "notices": [],
+      "problems": [],
+      "warnings": []
+    },
     "trade-republic-importer-addon": {
       "id": "trade-republic-importer-addon",
       "runtimeId": "trade-republic-importer",
       "repository": "https://github.com/blastik/trade-republic-importer-addon",
       "defaultBranch": "main",
-      "commit": "4a079f159db92f8974bfcb90a22f100d84be6383",
+      "commit": "bc5d25bddbeaa3c7a803a54147f12be5d852f9f3",
       "license": "MIT",
-      "lastPushedAt": "2026-08-21",
+      "lastPushedAt": "2026-08-24",
       "manifest": {
         "name": "Trade Republic Importer",
-        "version": "1.3.1",
-        "sdkVersion": "3.6.1",
+        "version": "1.3.3",
+        "sdkVersion": "3.7.0",
         "minWealthfolioVersion": "3.6.0",
         "permissions": [
           {
@@ -501,7 +561,7 @@
       },
       "compatibility": {
         "state": "current",
-        "detail": "Built against SDK 3.6.1."
+        "detail": "Built against SDK 3.7.0."
       },
       "notices": [],
       "problems": [],

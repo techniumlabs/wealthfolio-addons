@@ -1,0 +1,16 @@
+{
+  "$schema": "../../../schemas/addon-store.schema.json",
+  "id": "simplefin-wealthfolio-addon",
+  "name": "SimpleFIN Sync",
+  "description": "Sync bank, credit-card and investment data from SimpleFIN Bridge into Wealthfolio, with per-institution failure isolation and sync history.",
+  "author": {
+    "name": "Christian Mendieta",
+    "url": "https://github.com/christancho"
+  },
+  "trust": "community",
+  "status": "active",
+  "tags": ["banking", "sync", "import", "transactions", "investments"],
+  "commercialModel": "external-service-required",
+  "repository": "https://github.com/christancho/simplefin-wealthfolio-addon",
+  "supportUrl": "https://github.com/christancho/simplefin-wealthfolio-addon/issues"
+}

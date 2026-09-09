@@ -1,12 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
-import type { AddonContext, Holding } from "@wealthfolio/addon-sdk";
-import type { SwingDashboardData, ClosedTrade, OpenPosition, SwingDashboardPeriod } from "../types";
+import type { AddonContext } from "@wealthfolio/addon-sdk";
+import type { SwingDashboardData, ClosedTrade, SwingDashboardPeriod } from "../types";
 import { useSwingActivities } from "./use-swing-activities";
 import { useSwingPreferences } from "./use-swing-preferences";
 import { useHoldings } from "./use-holdings";
 import { TradeMatcher, PerformanceCalculator } from "../lib";
 import { useCurrencyConversion } from "./use-currency-conversion";
+import { updateOpenPositionsWithMarketPrices } from "../lib/position-valuation";
+import { useAssetProfiles } from "./use-asset-profiles";
 import { startOfDay, endOfDay, startOfYear, subMonths, subYears } from "date-fns";
 
 type ChartPeriodType = "daily" | "weekly" | "monthly";
@@ -64,7 +66,16 @@ export function useSwingDashboard(ctx: AddonContext, period: SwingDashboardPerio
     enabled: accountIds.length > 0,
   });
 
-  return useQuery({
+  const selectedActivities = useMemo(
+    () => filterSelectedActivities(activities ?? [], preferences),
+    [activities, preferences],
+  );
+  const profiles = useAssetProfiles(
+    ctx,
+    selectedActivities.map((activity) => activity.assetId),
+  );
+
+  const query = useQuery({
     queryKey: [
       "swing-dashboard",
       period,
@@ -73,19 +84,22 @@ export function useSwingDashboard(ctx: AddonContext, period: SwingDashboardPerio
       preferences.lotMatchingMethod,
       preferences.includeFees,
       preferences.includeDividends,
-      holdings?.length,
+      holdings,
+      selectedActivities,
+      profiles.data,
       exchangeRates,
+      baseCurrency,
     ],
     queryFn: async (): Promise<SwingDashboardData> => {
       if (!activities) {
         throw new Error("Activities not loaded");
       }
 
-      // Filter activities based on preferences
-      const selectedActivities = filterSelectedActivities(activities, preferences);
+      if (!profiles.data) throw new Error("Asset profiles not loaded");
 
       // Match trades using all selected activities (no date filtering here)
       const tradeMatcher = new TradeMatcher({
+        assets: new Map(profiles.data.map((asset) => [asset.id, asset])),
         lotMethod: preferences.lotMatchingMethod,
         includeFees: preferences.includeFees,
         includeDividends: preferences.includeDividends,
@@ -152,10 +166,20 @@ export function useSwingDashboard(ctx: AddonContext, period: SwingDashboardPerio
         calendar, // Period-aware calendar
       };
     },
-    enabled: !!activities && !!ctx.api && !!exchangeRates,
+    enabled: !!activities && !!ctx.api && !!exchangeRates && !!profiles.data,
     staleTime: 2 * 60 * 1000, // 2 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
   });
+  return {
+    ...query,
+    error: profiles.error ?? query.error,
+    isLoading: profiles.isPending || query.isLoading,
+    isPending: !profiles.error && (profiles.isPending || query.isPending),
+    refetch: async () => {
+      await profiles.refetch();
+      return query.refetch();
+    },
+  };
 }
 
 /**
@@ -170,14 +194,14 @@ function filterSelectedActivities(activities: any[], preferences: any) {
       preferences.selectedActivityIds.includes(activity.id) ||
       (preferences.includeSwingTag && activity.hasSwingTag);
     if (isSelected) {
-      selectedSymbols.add(activity.assetSymbol);
+      selectedSymbols.add(JSON.stringify([activity.accountId, activity.assetId]));
     }
   }
 
   // Second pass: include selected activities + SPLIT activities for those symbols
   return activities.filter((activity) => {
     if (activity.activityType === "SPLIT") {
-      return selectedSymbols.has(activity.assetSymbol);
+      return selectedSymbols.has(JSON.stringify([activity.accountId, activity.assetId]));
     }
 
     if (preferences.selectedActivityIds.includes(activity.id)) {
@@ -216,80 +240,6 @@ function createFxRateMap(
   });
 
   return fxRateMap;
-}
-
-/**
- * Update open positions with current market prices from holdings
- */
-function updateOpenPositionsWithMarketPrices(
-  openPositions: OpenPosition[],
-  holdings: Holding[],
-): OpenPosition[] {
-  return openPositions.map((position) => {
-    // Find matching holding by symbol
-    const matchingHolding = findMatchingHolding(position.symbol, holdings);
-
-    if (matchingHolding?.price != null && matchingHolding.price > 0) {
-      // Get current price and ensure it's in the same currency as the position
-      let currentPrice = matchingHolding.price;
-
-      // If holding has different currency than position, we need to convert
-      if (
-        matchingHolding.localCurrency &&
-        matchingHolding.localCurrency !== position.currency &&
-        matchingHolding.fxRate
-      ) {
-        // Convert holding price from local currency to position currency
-        if (matchingHolding.baseCurrency === position.currency) {
-          // Holding is in local currency, position is in base currency
-          currentPrice = matchingHolding.price * matchingHolding.fxRate;
-        } else if (matchingHolding.localCurrency === position.currency) {
-          // Already in correct currency
-          currentPrice = matchingHolding.price;
-        }
-        // Note: More complex currency conversions would need additional FX rate lookups
-      }
-
-      const marketValue = currentPrice * position.quantity;
-      const costBasis = position.averageCost * position.quantity;
-      // Include dividends in unrealized P/L calculation to match TradeMatcher
-      const unrealizedPL = marketValue - costBasis + (position.totalDividends || 0);
-      const unrealizedReturnPercent = costBasis > 0 ? unrealizedPL / costBasis : 0;
-
-      return {
-        ...position,
-        currentPrice,
-        marketValue,
-        unrealizedPL,
-        unrealizedReturnPercent,
-      };
-    }
-
-    return position;
-  });
-}
-
-/**
- * Find matching holding for a symbol
- */
-function findMatchingHolding(symbol: string, holdings: Holding[]): Holding | undefined {
-  // Try exact symbol match first
-  let matchingHolding = holdings.find((holding) => holding.instrument?.symbol === symbol);
-
-  // If no exact match, try base symbol matching (remove exchange suffixes)
-  if (!matchingHolding) {
-    const baseSymbol = symbol.split(".")[0];
-
-    matchingHolding = holdings.find((holding) => {
-      const holdingSymbol = holding.instrument?.symbol;
-      if (!holdingSymbol) return false;
-
-      const holdingBaseSymbol = holdingSymbol.split(".")[0];
-      return holdingBaseSymbol === baseSymbol;
-    });
-  }
-
-  return matchingHolding;
 }
 
 /**

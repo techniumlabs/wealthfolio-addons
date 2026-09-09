@@ -30,7 +30,10 @@ function PositionInfo({ position }: { position: OpenPosition }) {
     <div className="flex items-center gap-2">
       <TickerAvatar symbol={position.symbol} className="h-8 w-8" />
       <div className="min-w-0">
-        <div className="font-medium">{displaySymbol}</div>
+        <div className="flex items-center gap-2 font-medium">
+          {displaySymbol}
+          {position.direction === "SHORT" && <Badge variant="outline">Short</Badge>}
+        </div>
         {optionDescription ? (
           <div className="text-muted-foreground text-xs">{optionDescription}</div>
         ) : position.assetName ? (
@@ -125,7 +128,10 @@ export function OpenTradesTable({ positions, onAssetClick }: OpenTradesTableProp
                   </TableCell>
                   <TableCell>
                     <div>
-                      <div className="font-medium">{displaySymbol}</div>
+                      <div className="flex items-center gap-2 font-medium">
+                        {displaySymbol}
+                        {position.direction === "SHORT" && <Badge variant="outline">Short</Badge>}
+                      </div>
                       {optionDescription ? (
                         <div className="text-muted-foreground text-xs">{optionDescription}</div>
                       ) : position.assetName ? (

@@ -18,7 +18,7 @@
     "release:official": "node scripts/release-official.mjs",
     "generate:readme": "node scripts/generate-readme.mjs",
     "generate": "pnpm generate:readme",
-    "check": "pnpm test:schema && pnpm test:derive && pnpm validate:addons && pnpm type-check:official"
+    "check": "pnpm test:schema && pnpm test:derive && pnpm validate:addons && pnpm type-check:official && pnpm --filter swingfolio-addon test"
   },
   "devDependencies": {
     "ajv": "^8.20.0",

@@ -18,6 +18,8 @@ export interface SwingTradePreferences {
 
 export interface ClosedTrade {
   id: string;
+  contractMultiplier: number;
+  direction: "LONG" | "SHORT";
   symbol: string;
   assetId: string;
   assetName?: string;
@@ -40,6 +42,10 @@ export interface ClosedTrade {
 
 export interface OpenPosition {
   id: string;
+  contractMultiplier: number;
+  direction: "LONG" | "SHORT";
+  openingActivityType: string;
+  openingSubtype?: string | null;
   symbol: string;
   assetId: string;
   assetName?: string;

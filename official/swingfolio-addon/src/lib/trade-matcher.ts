@@ -1,4 +1,5 @@
-import type { ActivityDetails } from "@wealthfolio/addon-sdk";
+import type { ActivityDetails, Asset } from "@wealthfolio/addon-sdk";
+import { resolveContractMultiplier } from "./asset-multiplier";
 import { differenceInDays } from "date-fns";
 import type { ClosedTrade, OpenPosition, TradeMatchResult } from "../types";
 
@@ -8,6 +9,7 @@ type ParsedActivity = Omit<ActivityDetails, "quantity" | "unitPrice" | "fee" | "
   unitPrice: number;
   fee: number;
   amount: number;
+  instrumentType?: string;
 };
 
 interface Lot {
@@ -28,6 +30,7 @@ interface AverageLot {
 }
 
 export interface TradeMatcherOptions {
+  assets?: ReadonlyMap<string, Asset>;
   lotMethod?: "FIFO" | "LIFO" | "AVERAGE";
   includeFees?: boolean;
   includeDividends?: boolean;
@@ -40,11 +43,115 @@ export class TradeMatcher {
   private lotMethod: "FIFO" | "LIFO" | "AVERAGE";
   private includeFees: boolean;
   private includeDividends: boolean;
+  private assets: ReadonlyMap<string, Asset>;
 
   constructor(options: TradeMatcherOptions = {}) {
+    this.assets = options.assets ?? new Map();
     this.lotMethod = options.lotMethod || "FIFO";
     this.includeFees = options.includeFees !== false; // Default to true
     this.includeDividends = options.includeDividends !== false; // Default to true
+  }
+
+  /**
+   * Read instrument type from activity payload.
+   */
+  private getInstrumentType(activity: ParsedActivity): string | undefined {
+    return this.assets.get(activity.assetId)?.instrumentType ?? activity.instrumentType;
+  }
+
+  /**
+   * Resolve valuation from the asset, never the display symbol or activity metadata.
+   */
+  private getContractMultiplier(activity: ParsedActivity): number {
+    return resolveContractMultiplier(
+      this.assets.get(activity.assetId)?.metadata,
+      this.getInstrumentType(activity),
+    );
+  }
+
+  /**
+   * OPTION short open: SELL + POSITION_OPEN.
+   */
+  private isOptionShortOpen(activity: ParsedActivity): boolean {
+    const instrumentType = this.getInstrumentType(activity);
+    return (
+      instrumentType === "OPTION" &&
+      activity.activityType === "SELL" &&
+      activity.subtype === "POSITION_OPEN"
+    );
+  }
+
+  /**
+   * OPTION short close: BUY + POSITION_CLOSE.
+   */
+  private isOptionShortClose(activity: ParsedActivity): boolean {
+    const instrumentType = this.getInstrumentType(activity);
+    return (
+      instrumentType === "OPTION" &&
+      activity.activityType === "BUY" &&
+      activity.subtype === "POSITION_CLOSE"
+    );
+  }
+
+  /**
+   * Determine whether an activity opens a position.
+   */
+  private isOpeningActivity(activity: ParsedActivity): boolean {
+    const instrumentType = this.getInstrumentType(activity);
+
+    if (instrumentType === "OPTION") {
+      return activity.subtype === "POSITION_OPEN";
+    }
+
+    return activity.activityType === "BUY";
+  }
+
+  /**
+   * Determine whether an activity closes a position.
+   */
+  private isClosingActivity(activity: ParsedActivity): boolean {
+    const instrumentType = this.getInstrumentType(activity);
+
+    if (instrumentType === "OPTION") {
+      return activity.subtype === "POSITION_CLOSE";
+    }
+
+    return activity.activityType === "SELL";
+  }
+
+  /**
+   * Whether an opening activity represents a short position.
+   */
+  private isShortOpeningActivity(activity: ParsedActivity): boolean {
+    return this.isOptionShortOpen(activity);
+  }
+
+  /**
+   * Whether a closing activity is intended to close a short position.
+   */
+  private isShortClosingActivity(activity: ParsedActivity): boolean {
+    return this.isOptionShortClose(activity);
+  }
+
+  /**
+   * Track unmatched closing activity in the correct bucket.
+   */
+  private pushUnmatchedClosing(
+    activity: ParsedActivity,
+    quantity: number,
+    unmatchedBuys: ActivityDetails[],
+    unmatchedSells: ActivityDetails[],
+  ): void {
+    const unmatched = {
+      ...activity,
+      quantity,
+    } as unknown as ActivityDetails;
+
+    if (activity.activityType === "BUY") {
+      unmatchedBuys.push(unmatched);
+    } else {
+      unmatchedSells.push(unmatched);
+    }
   }
 
   /**
@@ -60,9 +167,9 @@ export class TradeMatcher {
     );
     const dividendActivities = parsedActivities.filter((a) => a.activityType === "DIVIDEND");
 
-    // Group activities by symbol
-    const bySymbol = this.groupBySymbol(tradingActivities);
-    const dividendsBySymbol = this.groupBySymbol(dividendActivities);
+    // Group activities by account and asset identity
+    const bySymbol = this.groupByAccountAsset(tradingActivities);
+    const dividendsBySymbol = this.groupByAccountAsset(dividendActivities);
 
     const closedTrades: ClosedTrade[] = [];
     const openPositions: OpenPosition[] = [];
@@ -70,8 +177,9 @@ export class TradeMatcher {
     const unmatchedSells: ActivityDetails[] = [];
 
     // Process each symbol separately
-    for (const [symbol, symbolActivities] of Object.entries(bySymbol)) {
-      const symbolDividends = dividendsBySymbol[symbol] || [];
+    for (const [key, symbolActivities] of Object.entries(bySymbol)) {
+      const symbol = symbolActivities[0].assetSymbol;
+      const symbolDividends = dividendsBySymbol[key] || [];
       const result = this.matchSymbolTrades(symbol, symbolActivities, symbolDividends);
 
       closedTrades.push(...result.closedTrades);
@@ -114,16 +222,16 @@ export class TradeMatcher {
   }
 
   /**
-   * Group activities by symbol
+   * Group activities by account and asset identity
    */
-  private groupBySymbol(activities: ParsedActivity[]): Record<string, ParsedActivity[]> {
+  private groupByAccountAsset(activities: ParsedActivity[]): Record<string, ParsedActivity[]> {
     return activities.reduce(
       (acc, activity) => {
-        const symbol = activity.assetSymbol;
-        if (!acc[symbol]) {
-          acc[symbol] = [];
+        const key = JSON.stringify([activity.accountId, activity.assetId]);
+        if (!acc[key]) {
+          acc[key] = [];
         }
-        acc[symbol].push(activity);
+        acc[key].push(activity);
         return acc;
       },
       {} as Record<string, ParsedActivity[]>,
@@ -143,11 +251,77 @@ export class TradeMatcher {
       (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
     );
 
-    if (this.lotMethod === "AVERAGE") {
-      return this.matchSymbolTradesAverage(symbol, sortedActivities, dividends);
-    } else {
-      return this.matchSymbolTradesSpecific(symbol, sortedActivities, dividends);
+    const normalized = this.normalizeOptionActivities(sortedActivities);
+    // Each cost pool contains one direction; equity behavior is unchanged.
+    const result: TradeMatchResult = {
+      closedTrades: [],
+      openPositions: [],
+      unmatchedBuys: [],
+      unmatchedSells: [],
+    };
+    for (const short of [false, true]) {
+      const directional = normalized.filter((activity) => {
+        if (activity.activityType === "SPLIT") return true;
+        const isShort = this.isOpeningActivity(activity)
+          ? this.isShortOpeningActivity(activity)
+          : this.isShortClosingActivity(activity);
+        return isShort === short;
+      });
+      const matched =
+        this.lotMethod === "AVERAGE"
+          ? this.matchSymbolTradesAverage(symbol, directional, dividends)
+          : this.matchSymbolTradesSpecific(symbol, directional, dividends);
+      result.closedTrades.push(...matched.closedTrades);
+      result.openPositions.push(...matched.openPositions);
+      result.unmatchedBuys.push(...matched.unmatchedBuys);
+      result.unmatchedSells.push(...matched.unmatchedSells);
     }
+    return result;
+  }
+
+  /** Like the host, option trades consume opposite inventory before opening a remainder. */
+  private normalizeOptionActivities(activities: ParsedActivity[]): ParsedActivity[] {
+    const inventory = { BUY: 0, SELL: 0 };
+    const result: ParsedActivity[] = [];
+    for (const activity of activities) {
+      if (activity.activityType === "SPLIT" && activity.amount > 0) {
+        inventory.BUY *= activity.amount;
+        inventory.SELL *= activity.amount;
+      }
+      if (
+        this.getInstrumentType(activity) !== "OPTION" ||
+        (activity.activityType !== "BUY" && activity.activityType !== "SELL")
+      ) {
+        result.push(activity);
+        continue;
+      }
+      const side = activity.activityType;
+      const opposite = side === "BUY" ? "SELL" : "BUY";
+      if (activity.subtype === "POSITION_CLOSE") {
+        inventory[opposite] = Math.max(0, inventory[opposite] - activity.quantity);
+        result.push(activity);
+      } else {
+        const closingQuantity = Math.min(inventory[opposite], activity.quantity);
+        inventory[opposite] -= closingQuantity;
+        const openingQuantity = activity.quantity - closingQuantity;
+        inventory[side] += openingQuantity;
+        for (const [subtype, quantity] of [
+          ["POSITION_CLOSE", closingQuantity],
+          ["POSITION_OPEN", openingQuantity],
+        ] as const) {
+          if (quantity > 0) {
+            result.push({
+              ...activity,
+              subtype,
+              quantity,
+              fee: (activity.fee * quantity) / activity.quantity,
+              amount: (activity.amount * quantity) / activity.quantity,
+            });
+          }
+        }
+      }
+    }
+    return result;
   }
 
   /**
@@ -175,7 +349,7 @@ export class TradeMatcher {
           averageLot.averagePrice /= splitRatio;
           // totalCostBasis stays the same (same total investment, more shares)
         }
-      } else if (activity.activityType === "BUY") {
+      } else if (this.isOpeningActivity(activity)) {
         // Add to average lot
         if (!averageLot) {
           averageLot = this.createNewAverageLot(activity, symbol);
@@ -198,10 +372,20 @@ export class TradeMatcher {
             averageLot.dividends.push(...uniqueNewDivs);
           }
         }
-      } else if (activity.activityType === "SELL") {
+      } else if (this.isClosingActivity(activity)) {
         // Process sell against average lot
-        if (!averageLot || averageLot.remainingQuantity <= 0) {
-          unmatchedSells.push(activity as unknown as ActivityDetails);
+        const averageLotOpeningActivity = averageLot?.activities[0];
+        const averageLotIsShort = averageLotOpeningActivity
+          ? this.isShortOpeningActivity(averageLotOpeningActivity)
+          : false;
+        const closingShort = this.isShortClosingActivity(activity);
+
+        if (
+          !averageLot ||
+          averageLot.remainingQuantity <= 0 ||
+          averageLotIsShort !== closingShort
+        ) {
+          this.pushUnmatchedClosing(activity, activity.quantity, unmatchedBuys, unmatchedSells);
           continue;
         }
 
@@ -231,10 +415,7 @@ export class TradeMatcher {
 
         // Handle remaining unmatched sell quantity
         if (sellQuantityRemaining > 0) {
-          unmatchedSells.push({
-            ...activity,
-            quantity: sellQuantityRemaining,
-          } as unknown as ActivityDetails);
+          this.pushUnmatchedClosing(activity, sellQuantityRemaining, unmatchedBuys, unmatchedSells);
         }
       }
     }
@@ -296,6 +477,7 @@ export class TradeMatcher {
   ): TradeMatchResult {
     const closedTrades: ClosedTrade[] = [];
     const openPositions: OpenPosition[] = [];
+    const unmatchedBuys: ActivityDetails[] = [];
     const unmatchedSells: ActivityDetails[] = [];
 
     const lots: Lot[] = [];
@@ -315,7 +497,7 @@ export class TradeMatcher {
             };
           }
         }
-      } else if (activity.activityType === "BUY") {
+      } else if (this.isOpeningActivity(activity)) {
         const lot: Lot = {
           activity: activity,
           remainingQuantity: activity.quantity,
@@ -329,12 +511,19 @@ export class TradeMatcher {
         }
 
         lots.push(lot);
-      } else if (activity.activityType === "SELL") {
+      } else if (this.isClosingActivity(activity)) {
         let sellQuantityRemaining = activity.quantity;
 
         while (sellQuantityRemaining > 0 && lots.length > 0) {
           const lotIndex = this.lotMethod === "FIFO" ? 0 : lots.length - 1;
           const lot = lots[lotIndex];
+          const lotIsShort = this.isShortOpeningActivity(lot.activity);
+          const closingShort = this.isShortClosingActivity(activity);
+
+          if (lotIsShort !== closingShort) {
+            break;
+          }
+
           const matchedQuantity = Math.min(sellQuantityRemaining, lot.remainingQuantity);
 
           const closedTrade = this.createClosedTrade(
@@ -355,10 +544,7 @@ export class TradeMatcher {
         }
 
         if (sellQuantityRemaining > 0) {
-          unmatchedSells.push({
-            ...activity,
-            quantity: sellQuantityRemaining,
-          } as unknown as ActivityDetails);
+          this.pushUnmatchedClosing(activity, sellQuantityRemaining, unmatchedBuys, unmatchedSells);
         }
       }
     }
@@ -376,7 +562,7 @@ export class TradeMatcher {
     return {
       closedTrades,
       openPositions,
-      unmatchedBuys: [],
+      unmatchedBuys,
       unmatchedSells,
     };
   }
@@ -386,7 +572,7 @@ export class TradeMatcher {
    */
   private createClosedTradeAverage(
     averageLot: AverageLot,
-    sellActivity: ParsedActivity,
+    closingActivity: ParsedActivity,
     quantity: number,
     symbol: string,
   ): ClosedTrade {
@@ -394,7 +580,7 @@ export class TradeMatcher {
     const entryDate = new Date(
       Math.min(...averageLot.activities.map((a) => new Date(a.date).getTime())),
     );
-    const exitDate = new Date(sellActivity.date);
+    const exitDate = new Date(closingActivity.date);
     const holdingPeriodDays = differenceInDays(exitDate, entryDate);
 
     // Calculate fees proportionally
@@ -405,7 +591,7 @@ export class TradeMatcher {
 
     // Sell fees: Calculate proportionally for this sell
     const sellFeeAllocation = this.includeFees
-      ? (sellActivity.fee * quantity) / sellActivity.quantity
+      ? (closingActivity.fee * quantity) / closingActivity.quantity
       : 0;
     const totalFees = buyFeeAllocation + sellFeeAllocation;
 
@@ -413,34 +599,45 @@ export class TradeMatcher {
     const totalDividends = this.calculateTradeDividends(entryDate, exitDate, averageLot.dividends);
 
     // Calculate P/L using average cost
-    const costBasis = averageLot.averagePrice * quantity;
-    const proceeds = sellActivity.unitPrice * quantity;
-    const realizedPL = proceeds - costBasis - totalFees + totalDividends;
-    const returnPercent = costBasis > 0 ? realizedPL / costBasis : 0;
+    const contractMultiplier = this.getContractMultiplier(closingActivity);
+    const entryNotional = averageLot.averagePrice * quantity * contractMultiplier;
+    const exitNotional = closingActivity.unitPrice * quantity * contractMultiplier;
+    const averageLotOpeningActivity =
+      averageLot.activities[0] ?? averageLot.activities[averageLot.activities.length - 1];
+    const isShort = this.isShortOpeningActivity(averageLotOpeningActivity);
+    const realizedPL = isShort
+      ? entryNotional - exitNotional - totalFees + totalDividends
+      : exitNotional - entryNotional - totalFees + totalDividends;
+    const returnPercent = entryNotional > 0 ? realizedPL / entryNotional : 0;
 
     // Get the most relevant buy activity
-    const relevantBuyActivity = averageLot.activities[averageLot.activities.length - 1];
+    const relevantEntryActivity = averageLot.activities[averageLot.activities.length - 1];
+    const openingActivityId = averageLot.activities[0]?.id ?? relevantEntryActivity.id;
+    const buyActivityId = isShort ? closingActivity.id : openingActivityId;
+    const sellActivityId = isShort ? openingActivityId : closingActivity.id;
 
     return {
-      id: `avg-${averageLot.activities[0].id}-${sellActivity.id}-${Date.now()}`,
+      id: `avg-${openingActivityId}-${closingActivity.id}-${Date.now()}`,
       symbol,
-      assetId: sellActivity.assetId,
-      assetName: sellActivity.assetName || undefined,
+      contractMultiplier,
+      direction: isShort ? "SHORT" : "LONG",
+      assetId: closingActivity.assetId,
+      assetName: closingActivity.assetName || undefined,
       entryDate,
       exitDate,
       quantity,
       entryPrice: averageLot.averagePrice,
-      exitPrice: sellActivity.unitPrice,
+      exitPrice: closingActivity.unitPrice,
       totalFees,
       totalDividends,
       realizedPL,
       returnPercent,
       holdingPeriodDays,
-      accountId: relevantBuyActivity.accountId,
-      accountName: relevantBuyActivity.accountName,
-      currency: relevantBuyActivity.currency,
-      buyActivityId: relevantBuyActivity.id,
-      sellActivityId: sellActivity.id,
+      accountId: relevantEntryActivity.accountId,
+      accountName: relevantEntryActivity.accountName,
+      currency: relevantEntryActivity.currency,
+      buyActivityId,
+      sellActivityId,
     };
   }
 
@@ -460,16 +657,24 @@ export class TradeMatcher {
 
     // Initial values (will be updated with real market prices)
     const currentPrice = averageLot.averagePrice;
-    const marketValue = currentPrice * averageLot.remainingQuantity;
-    const costBasis = averageLot.averagePrice * averageLot.remainingQuantity;
-    const unrealizedPL = marketValue - costBasis + totalDividends;
-    const unrealizedReturnPercent = costBasis > 0 ? unrealizedPL / costBasis : 0;
-
     const latestActivity = averageLot.activities[averageLot.activities.length - 1];
+    const contractMultiplier = this.getContractMultiplier(latestActivity);
+    const marketValue = currentPrice * averageLot.remainingQuantity * contractMultiplier;
+    const costBasis = averageLot.averagePrice * averageLot.remainingQuantity * contractMultiplier;
+    const averageLotOpeningActivity = averageLot.activities[0] ?? latestActivity;
+    const isShort = this.isShortOpeningActivity(averageLotOpeningActivity);
+    const unrealizedPL = isShort
+      ? costBasis - marketValue + totalDividends
+      : marketValue - costBasis + totalDividends;
+    const unrealizedReturnPercent = costBasis > 0 ? unrealizedPL / costBasis : 0;
 
     return {
       id: `avg-open-${averageLot.activities[0].id}-${Date.now()}`,
+      openingActivityType: averageLotOpeningActivity.activityType,
+      openingSubtype: averageLotOpeningActivity.subtype,
       symbol,
+      contractMultiplier,
+      direction: isShort ? "SHORT" : "LONG",
       assetId: latestActivity.assetId,
       assetName: latestActivity.assetName || undefined,
       quantity: averageLot.remainingQuantity,
@@ -492,22 +697,22 @@ export class TradeMatcher {
    * Create a closed trade from specific lot matching
    */
   private createClosedTrade(
-    buyActivity: ParsedActivity,
-    sellActivity: ParsedActivity,
+    openingActivity: ParsedActivity,
+    closingActivity: ParsedActivity,
     quantity: number,
     symbol: string,
     dividends: ParsedActivity[] = [],
   ): ClosedTrade {
-    const entryDate = new Date(buyActivity.date);
-    const exitDate = new Date(sellActivity.date);
+    const entryDate = new Date(openingActivity.date);
+    const exitDate = new Date(closingActivity.date);
     const holdingPeriodDays = differenceInDays(exitDate, entryDate);
 
     // Calculate fees proportionally
     const buyFeeAllocation = this.includeFees
-      ? (buyActivity.fee * quantity) / buyActivity.quantity
+      ? (openingActivity.fee * quantity) / openingActivity.quantity
       : 0;
     const sellFeeAllocation = this.includeFees
-      ? (sellActivity.fee * quantity) / sellActivity.quantity
+      ? (closingActivity.fee * quantity) / closingActivity.quantity
       : 0;
     const totalFees = buyFeeAllocation + sellFeeAllocation;
 
@@ -515,31 +720,40 @@ export class TradeMatcher {
     const totalDividends = this.calculateTradeDividends(entryDate, exitDate, dividends);
 
     // Calculate P/L
-    const costBasis = buyActivity.unitPrice * quantity;
-    const proceeds = sellActivity.unitPrice * quantity;
-    const realizedPL = proceeds - costBasis - totalFees + totalDividends;
-    const returnPercent = costBasis > 0 ? realizedPL / costBasis : 0;
+    const contractMultiplier = this.getContractMultiplier(openingActivity);
+    const entryNotional = openingActivity.unitPrice * quantity * contractMultiplier;
+    const exitNotional = closingActivity.unitPrice * quantity * contractMultiplier;
+    const isShort = this.isShortOpeningActivity(openingActivity);
+    const realizedPL = isShort
+      ? entryNotional - exitNotional - totalFees + totalDividends
+      : exitNotional - entryNotional - totalFees + totalDividends;
+    const returnPercent = entryNotional > 0 ? realizedPL / entryNotional : 0;
+
+    const buyActivityId = isShort ? closingActivity.id : openingActivity.id;
+    const sellActivityId = isShort ? openingActivity.id : closingActivity.id;
 
     return {
-      id: `${buyActivity.id}-${sellActivity.id}-${Date.now()}`,
+      id: `${openingActivity.id}-${closingActivity.id}-${Date.now()}`,
       symbol,
-      assetId: buyActivity.assetId,
-      assetName: buyActivity.assetName || undefined,
+      contractMultiplier,
+      direction: isShort ? "SHORT" : "LONG",
+      assetId: openingActivity.assetId,
+      assetName: openingActivity.assetName || undefined,
       entryDate,
       exitDate,
       quantity,
-      entryPrice: buyActivity.unitPrice,
-      exitPrice: sellActivity.unitPrice,
+      entryPrice: openingActivity.unitPrice,
+      exitPrice: closingActivity.unitPrice,
       totalFees,
       totalDividends,
       realizedPL,
       returnPercent,
       holdingPeriodDays,
-      accountId: buyActivity.accountId,
-      accountName: buyActivity.accountName,
-      currency: buyActivity.currency,
-      buyActivityId: buyActivity.id,
-      sellActivityId: sellActivity.id,
+      accountId: openingActivity.accountId,
+      accountName: openingActivity.accountName,
+      currency: openingActivity.currency,
+      buyActivityId,
+      sellActivityId,
     };
   }
 
@@ -557,14 +771,22 @@ export class TradeMatcher {
 
     // Initial values (will be updated with real market prices)
     const currentPrice = lot.activity.unitPrice;
-    const marketValue = currentPrice * lot.remainingQuantity;
-    const costBasis = lot.activity.unitPrice * lot.remainingQuantity;
-    const unrealizedPL = marketValue - costBasis + totalDividends;
+    const contractMultiplier = this.getContractMultiplier(lot.activity);
+    const marketValue = currentPrice * lot.remainingQuantity * contractMultiplier;
+    const costBasis = lot.activity.unitPrice * lot.remainingQuantity * contractMultiplier;
+    const isShort = this.isShortOpeningActivity(lot.activity);
+    const unrealizedPL = isShort
+      ? costBasis - marketValue + totalDividends
+      : marketValue - costBasis + totalDividends;
     const unrealizedReturnPercent = costBasis > 0 ? unrealizedPL / costBasis : 0;
 
     return {
       id: `${lot.activity.id}-open-${Date.now()}`,
+      openingActivityType: lot.activity.activityType,
+      openingSubtype: lot.activity.subtype,
       symbol,
+      contractMultiplier,
+      direction: isShort ? "SHORT" : "LONG",
       assetId: lot.activity.assetId,
       assetName: lot.activity.assetName || undefined,
       quantity: lot.remainingQuantity,

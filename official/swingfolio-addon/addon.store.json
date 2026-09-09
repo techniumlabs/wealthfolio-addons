@@ -10,16 +10,16 @@
     "calendar"
   ],
   "release": {
-    "version": "3.6.2",
-    "minWealthfolioVersion": "3.6.2",
-    "sdkVersion": "3.6.2",
+    "version": "3.8.0",
+    "minWealthfolioVersion": "3.8.0",
+    "sdkVersion": "3.8.0",
     "critical": false,
     "breaking": false,
-    "notes": "Requires Wealthfolio 3.6.2 or later.",
+    "notes": "Requires Wealthfolio 3.8.0 or later.",
     "changelogUrl": "https://github.com/wealthfolio/wealthfolio-addons/tree/main/official/swingfolio-addon/CHANGELOG.md"
   },
   "distribution": {
-    "r2Path": "swingfolio-addon/swingfolio-addon-3.6.2.zip"
+    "r2Path": "swingfolio-addon/swingfolio-addon-3.8.0.zip"
   },
   "media": {
     "coverLight": "media/cover-light.webp",

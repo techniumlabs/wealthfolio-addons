@@ -103,6 +103,7 @@ performance with detailed analytics, calendar views, and performance metrics.
 
 ## Permissions Required
 
+- **Assets**: Read asset profiles for instrument types and contract multipliers
 - **Activities**: Read access to BUY/SELL transactions
 - **Portfolio**: Read access to holdings for unrealized P/L calculations
 - **Currency**: Read access to exchange rates and currency data
@@ -110,8 +111,7 @@ performance with detailed analytics, calendar views, and performance metrics.
 
 Storage, UI integration, query caching, packaged assets, toast notifications,
 and logging are baseline capabilities in Wealthfolio 3.7 and do not require
-manifest permissions. This addon's published 3.6.2 manifest retains its legacy
-UI permission entry for release compatibility.
+manifest permissions. The manifest retains the legacy UI permission entry for compatibility.
 
 ## Technical Details
 
@@ -125,8 +125,7 @@ UI permission entry for release compatibility.
 ### Development
 
 `pnpm dev` rebuilds the addon continuously. `pnpm dev:server` serves the
-complete runtime package to a Wealthfolio 3.7 host with hot reload. The
-published 3.6.2 bundle itself remains runtime-compatible.
+complete runtime package to a Wealthfolio 3.8.0 or later host with hot reload.
 
 ### Trade Matching Engine
 
